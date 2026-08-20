@@ -15,6 +15,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./enhancements.css">
+
+  <style>
+    html, body {
+      touch-action: pan-x pan-y;
+      overscroll-behavior: none;
+    }
+
+    #youtubeAudioHost {
+      position: fixed !important;
+      width: 200px !important;
+      height: 200px !important;
+      left: -10000px !important;
+      top: 0 !important;
+      overflow: visible !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    #youtubeAudioPlayer {
+      display: block !important;
+      width: 200px !important;
+      height: 200px !important;
+      border: 0 !important;
+    }
+  </style>
 </head>
 <body>
   <div class="page-noise" aria-hidden="true"></div>
