@@ -4,14 +4,12 @@ const PARTY_DATE = new Date("2026-09-05T14:00:00-03:00");
 const JULIA_WHATSAPP = "5511995817225";
 const WHATSAPP_MESSAGE =
   "Oi, Júlia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
-const YOUTUBE_VIDEO_ID = "5t3v5T5TCWA";
 const MUSIC_VOLUME = 12;
 
 const pad = (value) => String(value).padStart(2, "0");
 
 function updateCountdown() {
   const difference = PARTY_DATE.getTime() - Date.now();
-
   const daysElement = document.getElementById("days");
   const hoursElement = document.getElementById("hours");
   const minutesElement = document.getElementById("minutes");
@@ -65,7 +63,7 @@ function applyScrollMotion() {
     heroCard.style.transform = `translate3d(0, ${progress * 22}px, 0) scale(${1 - progress * 0.018})`;
   }
 
-  document.querySelectorAll(".content-section .section-bow").forEach((bow, index) => {
+  document.querySelectorAll(".content-section .section-bow").forEach((bow) => {
     const rect = bow.getBoundingClientRect();
     const center = window.innerHeight / 2;
     const distance = (rect.top - center) / window.innerHeight;
@@ -109,10 +107,7 @@ if ("IntersectionObserver" in window) {
         observer.unobserve(entry.target);
       });
     },
-    {
-      threshold: 0.14,
-      rootMargin: "0px 0px -28px 0px",
-    }
+    { threshold: 0.14, rootMargin: "0px 0px -28px 0px" }
   );
 
   revealElements.forEach((element) => observer.observe(element));
@@ -131,9 +126,7 @@ window.addEventListener("load", () => {
 const confirmButton = document.getElementById("confirmPresence");
 
 if (confirmButton) {
-  confirmButton.href = `https://wa.me/${JULIA_WHATSAPP}?text=${encodeURIComponent(
-    WHATSAPP_MESSAGE
-  )}`;
+  confirmButton.href = `https://wa.me/${JULIA_WHATSAPP}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
   confirmButton.target = "_blank";
   confirmButton.rel = "noopener noreferrer";
 }
@@ -144,107 +137,108 @@ document.querySelectorAll(".red-hood, .basket").forEach((element) => {
   });
 });
 
-/* Música do convite. O player do YouTube fica fora da tela, então só o áudio é percebido. */
-let youtubePlayer = null;
-let musicPlaying = false;
-let playerReady = false;
+/* Player de música via iframe direto do YouTube. */
 const musicToggle = document.getElementById("musicToggle");
+const youtubeFrame = document.getElementById("youtubeAudioPlayer");
+let musicPlaying = false;
+let frameReady = false;
+
+function sendYouTubeCommand(func, args = []) {
+  if (!youtubeFrame?.contentWindow) return;
+
+  youtubeFrame.contentWindow.postMessage(
+    JSON.stringify({
+      event: "command",
+      func,
+      args,
+    }),
+    "https://www.youtube.com"
+  );
+}
 
 function updateMusicButton() {
   if (!musicToggle) return;
 
   musicToggle.classList.toggle("playing", musicPlaying);
   const label = musicToggle.querySelector(".music-label");
-
-  if (label) {
-    label.textContent = musicPlaying ? "pausar música" : "tocar música";
-  }
-
-  musicToggle.setAttribute(
-    "aria-label",
-    musicPlaying ? "Pausar música" : "Tocar música"
-  );
+  if (label) label.textContent = musicPlaying ? "pausar música" : "tocar música";
+  musicToggle.setAttribute("aria-label", musicPlaying ? "Pausar música" : "Tocar música");
 }
 
-function tryStartMusic() {
-  if (!playerReady || !youtubePlayer) return false;
-
-  try {
-    youtubePlayer.setVolume(MUSIC_VOLUME);
-    youtubePlayer.playVideo();
-    return true;
-  } catch {
-    return false;
-  }
+function prepareFrame() {
+  sendYouTubeCommand("addEventListener", ["onStateChange"]);
+  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
 }
 
-function markNeedsInteraction() {
-  if (!musicToggle || musicPlaying) return;
-  musicToggle.classList.add("needs-touch");
+function playMusic() {
+  if (!frameReady) return;
+  sendYouTubeCommand("unMute");
+  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
+  sendYouTubeCommand("playVideo");
 }
 
-window.onYouTubeIframeAPIReady = function () {
-  youtubePlayer = new YT.Player("youtubeAudioPlayer", {
-    height: "1",
-    width: "1",
-    videoId: YOUTUBE_VIDEO_ID,
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      playsinline: 1,
-      rel: 0,
-      loop: 1,
-      playlist: YOUTUBE_VIDEO_ID,
-    },
-    events: {
-      onReady: (event) => {
-        playerReady = true;
-        event.target.setVolume(MUSIC_VOLUME);
-        event.target.playVideo();
+function pauseMusic() {
+  if (!frameReady) return;
+  sendYouTubeCommand("pauseVideo");
+}
 
-        window.setTimeout(() => {
-          if (!musicPlaying) markNeedsInteraction();
-        }, 1200);
-      },
-      onStateChange: (event) => {
-        if (!window.YT) return;
-        musicPlaying = event.data === YT.PlayerState.PLAYING;
-        if (musicPlaying && musicToggle) {
-          musicToggle.classList.remove("needs-touch");
-        }
-        updateMusicButton();
-      },
-    },
+if (youtubeFrame) {
+  youtubeFrame.addEventListener("load", () => {
+    frameReady = true;
+    prepareFrame();
+
+    // Tenta autoplay. Navegadores podem bloquear até haver interação.
+    window.setTimeout(() => {
+      playMusic();
+    }, 350);
   });
-};
+}
 
-const youtubeApi = document.createElement("script");
-youtubeApi.src = "https://www.youtube.com/iframe_api";
-youtubeApi.async = true;
-document.head.appendChild(youtubeApi);
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://www.youtube.com") return;
+
+  let data = event.data;
+  try {
+    if (typeof data === "string") data = JSON.parse(data);
+  } catch {
+    return;
+  }
+
+  if (data?.event === "onStateChange") {
+    // 1 = playing, 2 = paused, 0 = ended
+    musicPlaying = data.info === 1;
+    updateMusicButton();
+  }
+});
 
 if (musicToggle) {
   musicToggle.addEventListener("click", () => {
-    if (!youtubePlayer || !playerReady) return;
+    if (!frameReady) {
+      const label = musicToggle.querySelector(".music-label");
+      if (label) label.textContent = "carregando...";
+      return;
+    }
 
     if (musicPlaying) {
-      youtubePlayer.pauseVideo();
+      pauseMusic();
+      musicPlaying = false;
     } else {
-      tryStartMusic();
+      playMusic();
+      musicPlaying = true;
     }
+
+    updateMusicButton();
   });
 }
 
-/* Safari/iOS costuma bloquear autoplay com som. No primeiro toque real, tenta iniciar. */
-function unlockMusicOnInteraction() {
-  if (!musicPlaying) {
-    tryStartMusic();
+// Em iOS, a primeira interação do usuário é a melhor chance de liberar áudio.
+function unlockMusic() {
+  if (!musicPlaying && frameReady) {
+    playMusic();
   }
 }
 
-document.addEventListener("pointerdown", unlockMusicOnInteraction, { once: true, passive: true });
-document.addEventListener("touchstart", unlockMusicOnInteraction, { once: true, passive: true });
+document.addEventListener("pointerdown", unlockMusic, { once: true });
+document.addEventListener("touchstart", unlockMusic, { once: true });
 
 updateMusicButton();
