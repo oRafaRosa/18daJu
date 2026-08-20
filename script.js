@@ -1,10 +1,7 @@
 document.documentElement.classList.add("js");
 
 const PARTY_DATE = new Date("2026-09-05T14:00:00-03:00");
-
-// Preencha quando o número da Júlia estiver definido.
-// Formato: 55 + DDD + número, somente dígitos.
-const JULIA_WHATSAPP = "";
+const JULIA_WHATSAPP = "5511995817225";
 const WHATSAPP_MESSAGE =
   "Oi, Júlia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
 
@@ -90,7 +87,6 @@ if ("IntersectionObserver" in window) {
   revealElements.forEach((element) => element.classList.add("is-visible"));
 }
 
-// Fallback para previews limitados que executam JS, mas não disparam corretamente o observer.
 window.addEventListener("load", () => {
   window.setTimeout(() => {
     document.querySelectorAll(".hero .reveal").forEach((element) => {
@@ -102,21 +98,13 @@ window.addEventListener("load", () => {
 const confirmButton = document.getElementById("confirmPresence");
 
 if (confirmButton) {
-  if (JULIA_WHATSAPP) {
-    confirmButton.href = `https://wa.me/${JULIA_WHATSAPP}?text=${encodeURIComponent(
-      WHATSAPP_MESSAGE
-    )}`;
-    confirmButton.target = "_blank";
-    confirmButton.rel = "noopener noreferrer";
-  } else {
-    // Enquanto o número não foi informado, o botão fica visualmente pronto sem expor texto técnico no convite.
-    confirmButton.addEventListener("click", (event) => {
-      event.preventDefault();
-    });
-  }
+  confirmButton.href = `https://wa.me/${JULIA_WHATSAPP}?text=${encodeURIComponent(
+    WHATSAPP_MESSAGE
+  )}`;
+  confirmButton.target = "_blank";
+  confirmButton.rel = "noopener noreferrer";
 }
 
-// Easter eggs discretos. Ao tocar, eles ficam um pouco mais visíveis.
 document.querySelectorAll(".red-hood, .basket").forEach((element) => {
   element.addEventListener("click", () => {
     element.classList.toggle("found");
