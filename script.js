@@ -4,7 +4,6 @@ const PARTY_DATE = new Date("2026-09-05T14:00:00-03:00");
 const JULIA_WHATSAPP = "5511995817225";
 const WHATSAPP_MESSAGE =
   "Oi, Júlia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
-const MUSIC_VOLUME = 7;
 
 const pad = (value) => String(value).padStart(2, "0");
 
@@ -137,19 +136,10 @@ document.querySelectorAll(".red-hood, .basket").forEach((element) => {
   });
 });
 
-/* Player de música via iframe do YouTube. */
+/* Música local do convite. O arquivo já deve estar com ganho reduzido. */
 const musicToggle = document.getElementById("musicToggle");
-const youtubeFrame = document.getElementById("youtubeAudioPlayer");
+const inviteAudio = document.getElementById("inviteAudio");
 let musicPlaying = false;
-
-function sendYouTubeCommand(func, args = []) {
-  if (!youtubeFrame?.contentWindow) return;
-
-  youtubeFrame.contentWindow.postMessage(
-    JSON.stringify({ event: "command", func, args }),
-    "*"
-  );
-}
 
 function updateMusicButton() {
   if (!musicToggle) return;
@@ -160,57 +150,56 @@ function updateMusicButton() {
   musicToggle.setAttribute("aria-label", musicPlaying ? "Pausar música" : "Tocar música");
 }
 
-function prepareMusic() {
-  sendYouTubeCommand("mute");
-  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-  sendYouTubeCommand("playVideo");
-}
+async function playMusic() {
+  if (!inviteAudio) return;
 
-function playMusic() {
-  // Mantém mutado enquanto o volume é aplicado para evitar qualquer pico em 100%.
-  sendYouTubeCommand("mute");
-  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-  sendYouTubeCommand("playVideo");
-
-  window.setTimeout(() => {
-    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-    sendYouTubeCommand("unMute");
-    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-    sendYouTubeCommand("playVideo");
-  }, 120);
-
-  // Reforço extra para Safari/iOS, que às vezes restaura o volume anterior ao desmutar.
-  window.setTimeout(() => {
-    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-  }, 320);
+  try {
+    await inviteAudio.play();
+    musicPlaying = true;
+    updateMusicButton();
+  } catch {
+    musicPlaying = false;
+    updateMusicButton();
+  }
 }
 
 function pauseMusic() {
-  sendYouTubeCommand("pauseVideo");
+  if (!inviteAudio) return;
+  inviteAudio.pause();
+  musicPlaying = false;
+  updateMusicButton();
 }
 
-window.setTimeout(prepareMusic, 700);
-window.addEventListener("load", () => window.setTimeout(prepareMusic, 300));
+if (inviteAudio) {
+  inviteAudio.addEventListener("play", () => {
+    musicPlaying = true;
+    updateMusicButton();
+  });
+
+  inviteAudio.addEventListener("pause", () => {
+    musicPlaying = false;
+    updateMusicButton();
+  });
+
+  inviteAudio.addEventListener("ended", () => {
+    musicPlaying = false;
+    updateMusicButton();
+  });
+}
 
 if (musicToggle) {
   musicToggle.addEventListener("click", () => {
     if (musicPlaying) {
       pauseMusic();
-      musicPlaying = false;
     } else {
       playMusic();
-      musicPlaying = true;
     }
-
-    updateMusicButton();
   });
 }
 
+/* Tenta iniciar na primeira interação permitida pelo navegador. */
 function unlockMusic() {
-  if (musicPlaying) return;
-  playMusic();
-  musicPlaying = true;
-  updateMusicButton();
+  if (!musicPlaying) playMusic();
 }
 
 document.addEventListener("pointerdown", unlockMusic, { once: true, passive: true });
