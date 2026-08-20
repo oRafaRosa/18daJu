@@ -1,0 +1,321 @@
+/* Refinos visuais: laços mais coquette e animações mais ricas */
+
+/* Laço principal com aparência de fita, menos arredondado */
+.center-bow,
+.corner-bow {
+  width: 82px;
+  height: 56px;
+}
+
+.center-bow {
+  filter: drop-shadow(0 7px 10px rgba(181, 83, 119, 0.10));
+}
+
+.bow-loop,
+.bow-knot,
+.bow-ribbon {
+  background: linear-gradient(145deg, #fffafd 0%, #fbdce8 50%, #f2bfd1 100%);
+  border: 1.7px solid #cf7695;
+  box-shadow:
+    inset 3px 3px 8px rgba(255,255,255,.9),
+    inset -2px -2px 6px rgba(190,95,130,.08);
+}
+
+.bow-loop {
+  top: 5px;
+  width: 39px;
+  height: 29px;
+}
+
+.bow-loop.left {
+  left: 3px;
+  border-radius: 72% 20% 68% 30% / 56% 24% 76% 44%;
+  clip-path: polygon(0 16%, 100% 0, 86% 100%, 4% 82%);
+  transform: rotate(10deg) skewX(-7deg);
+}
+
+.bow-loop.right {
+  right: 3px;
+  border-radius: 20% 72% 30% 68% / 24% 56% 44% 76%;
+  clip-path: polygon(0 0, 100% 16%, 96% 82%, 14% 100%);
+  transform: rotate(-10deg) skewX(7deg);
+}
+
+.bow-knot {
+  top: 14px;
+  left: 33px;
+  width: 17px;
+  height: 15px;
+  border-radius: 42% 58% 45% 55%;
+  transform: rotate(-3deg);
+}
+
+.bow-ribbon {
+  top: 27px;
+  width: 22px;
+  height: 31px;
+  border-top: 0;
+}
+
+.ribbon-left {
+  left: 25px;
+  clip-path: polygon(5% 0, 100% 0, 78% 100%, 51% 76%, 20% 100%);
+  transform: rotate(14deg) skewX(-5deg);
+}
+
+.ribbon-right {
+  right: 25px;
+  clip-path: polygon(0 0, 95% 0, 80% 100%, 49% 76%, 22% 100%);
+  transform: rotate(-14deg) skewX(5deg);
+}
+
+.corner-bow {
+  opacity: .52;
+  filter: drop-shadow(0 6px 9px rgba(181, 83, 119, .08));
+}
+
+.corner-bow-left {
+  transform: scale(.72) rotate(-10deg);
+}
+
+.corner-bow-right {
+  transform: scale(.72) rotate(11deg);
+}
+
+/* Mini laços ao fundo também ganham fitinhas */
+.mini-bow {
+  width: 34px;
+  height: 28px;
+}
+
+.mini-bow::before,
+.mini-bow::after {
+  width: 16px;
+  height: 12px;
+  top: 2px;
+  border-radius: 65% 20% 60% 28%;
+}
+
+.mini-bow::before {
+  transform: rotate(9deg) skewX(-7deg);
+}
+
+.mini-bow::after {
+  transform: rotate(-9deg) skewX(7deg);
+}
+
+.mini-bow i {
+  left: 13px;
+  top: 5px;
+  width: 8px;
+  height: 7px;
+  border-radius: 45%;
+}
+
+.mini-bow i::before,
+.mini-bow i::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  width: 8px;
+  height: 15px;
+  border: 1.2px solid #bd6887;
+  border-top: 0;
+  background: rgba(255,244,248,.72);
+}
+
+.mini-bow i::before {
+  left: -3px;
+  transform: rotate(12deg);
+  clip-path: polygon(0 0,100% 0,74% 100%,50% 76%,18% 100%);
+}
+
+.mini-bow i::after {
+  right: -3px;
+  transform: rotate(-12deg);
+  clip-path: polygon(0 0,100% 0,82% 100%,50% 76%,24% 100%);
+}
+
+/* Camadas de movimento ligadas ao scroll */
+.hero-card,
+.glass-card,
+.menu-inner,
+.detail-card,
+.center-bow,
+.section-bow,
+.date-badge {
+  will-change: transform, opacity;
+}
+
+.js .reveal.anim-left {
+  transform: translate3d(-58px, 28px, 0) rotate(-1.5deg) scale(.975);
+}
+
+.js .reveal.anim-right {
+  transform: translate3d(58px, 28px, 0) rotate(1.5deg) scale(.975);
+}
+
+.js .reveal.anim-zoom {
+  transform: translate3d(0, 38px, 0) scale(.92);
+}
+
+.js .reveal.anim-soft-rotate {
+  transform: translate3d(0, 36px, 0) rotate(2deg) scale(.97);
+}
+
+.js .reveal.anim-left.is-visible,
+.js .reveal.anim-right.is-visible,
+.js .reveal.anim-zoom.is-visible,
+.js .reveal.anim-soft-rotate.is-visible {
+  transform: translate3d(0,0,0) rotate(0) scale(1);
+  transition:
+    opacity 900ms cubic-bezier(.16,.75,.2,1),
+    transform 1000ms cubic-bezier(.16,.75,.2,1);
+}
+
+.js .reveal-child {
+  transform: translateY(36px) scale(.94) rotate(1.2deg);
+}
+
+.js .reveal-child:nth-child(even) {
+  transform: translateY(40px) scale(.94) rotate(-1.2deg);
+}
+
+.js .reveal-child.is-visible {
+  transform: none;
+  transition:
+    opacity 760ms cubic-bezier(.2,.7,.2,1),
+    transform 900ms cubic-bezier(.16,.75,.2,1);
+}
+
+.is-visible .section-bow {
+  animation: bowPop 900ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.is-visible .date-badge {
+  animation: badgeIn 800ms 180ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.is-visible h1 {
+  animation: nameIn 1050ms cubic-bezier(.16,.78,.18,1) both;
+}
+
+.is-visible .center-bow {
+  animation: bowFloatIn 1100ms 120ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.time-card {
+  transition: transform .28s ease, box-shadow .28s ease;
+}
+
+.time-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 13px 30px rgba(139,72,98,.11);
+}
+
+@keyframes bowPop {
+  0% { opacity: 0; transform: translateY(8px) rotate(-12deg) scale(.5); }
+  60% { transform: translateY(-2px) rotate(4deg) scale(1.12); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes badgeIn {
+  0% { opacity: 0; transform: translateY(18px) scale(.92); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes nameIn {
+  0% { opacity: 0; transform: translateY(24px) scale(.92); filter: blur(5px); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes bowFloatIn {
+  0% { opacity: 0; transform: translateY(-10px) rotate(-8deg) scale(.65); }
+  70% { transform: translateY(2px) rotate(3deg) scale(1.06); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Pequeno controle de música. O vídeo do YouTube nunca fica visível. */
+#youtubeAudioHost {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  left: -9999px;
+  top: -9999px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-toggle {
+  position: fixed;
+  z-index: 120;
+  right: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid rgba(195, 91, 129, .20);
+  border-radius: 999px;
+  background: rgba(255, 251, 253, .90);
+  color: #a45170;
+  box-shadow: 0 10px 28px rgba(139,72,98,.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: transform .2s ease, opacity .2s ease, box-shadow .2s ease;
+}
+
+.music-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(139,72,98,.18);
+}
+
+.music-toggle .music-label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  transition: max-width .3s ease, opacity .3s ease;
+}
+
+.music-toggle.needs-touch .music-label {
+  max-width: 90px;
+  opacity: 1;
+}
+
+.music-toggle.playing .music-note {
+  animation: musicPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+  0%,100% { transform: scale(1) rotate(0); }
+  45% { transform: scale(1.16) rotate(-8deg); }
+  70% { transform: scale(.96) rotate(5deg); }
+}
+
+@media (max-width: 700px) {
+  .music-toggle {
+    right: 12px;
+    bottom: 12px;
+    height: 43px;
+    min-width: 43px;
+    padding-inline: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal.anim-left,
+  .js .reveal.anim-right,
+  .js .reveal.anim-zoom,
+  .js .reveal.anim-soft-rotate {
+    transform: none;
+  }
+}
