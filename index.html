@@ -22,22 +22,14 @@
       overscroll-behavior: none;
     }
 
-    #youtubeAudioHost {
-      position: fixed !important;
-      width: 200px !important;
-      height: 200px !important;
-      left: -10000px !important;
-      top: 0 !important;
-      overflow: visible !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    #youtubeAudioPlayer {
-      display: block !important;
-      width: 200px !important;
-      height: 200px !important;
-      border: 0 !important;
+    #inviteAudio {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -9999px;
+      top: -9999px;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .company-credit {
@@ -156,18 +148,9 @@
     <span class="company-credit">Página desenvolvida por R² Solutions Group – Tech &amp; Consulting</span>
   </footer>
 
-  <div id="youtubeAudioHost" aria-hidden="true">
-    <iframe
-      id="youtubeAudioPlayer"
-      title="Música do convite"
-      width="200"
-      height="200"
-      src="https://www.youtube.com/embed/5t3v5T5TCWA?enablejsapi=1&playsinline=1&controls=0&rel=0&loop=1&playlist=5t3v5T5TCWA&autoplay=1&mute=1&origin=https%3A%2F%2Forafarosa.github.io"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      referrerpolicy="strict-origin-when-cross-origin"
-      frameborder="0"
-    ></iframe>
-  </div>
+  <audio id="inviteAudio" preload="auto" loop playsinline>
+    <source src="./assets/chapeuzinho.mp3" type="audio/mpeg">
+  </audio>
 
   <button class="music-toggle" id="musicToggle" type="button" aria-label="Tocar música" title="Música">
     <span class="music-note">♪</span>
