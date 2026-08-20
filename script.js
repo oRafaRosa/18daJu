@@ -4,7 +4,7 @@ const PARTY_DATE = new Date("2026-09-05T14:00:00-03:00");
 const JULIA_WHATSAPP = "5511995817225";
 const WHATSAPP_MESSAGE =
   "Oi, Júlia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
-const MUSIC_VOLUME = 12;
+const MUSIC_VOLUME = 7;
 
 const pad = (value) => String(value).padStart(2, "0");
 
@@ -161,28 +161,34 @@ function updateMusicButton() {
 }
 
 function prepareMusic() {
+  sendYouTubeCommand("mute");
   sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
   sendYouTubeCommand("playVideo");
 }
 
 function playMusic() {
-  sendYouTubeCommand("unMute");
+  // Mantém mutado enquanto o volume é aplicado para evitar qualquer pico em 100%.
+  sendYouTubeCommand("mute");
   sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
   sendYouTubeCommand("playVideo");
 
-  // Reenvia pouco depois porque Safari pode ignorar o primeiro comando durante a inicialização.
   window.setTimeout(() => {
+    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
     sendYouTubeCommand("unMute");
     sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
     sendYouTubeCommand("playVideo");
-  }, 180);
+  }, 120);
+
+  // Reforço extra para Safari/iOS, que às vezes restaura o volume anterior ao desmutar.
+  window.setTimeout(() => {
+    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
+  }, 320);
 }
 
 function pauseMusic() {
   sendYouTubeCommand("pauseVideo");
 }
 
-// O iframe já carrega com autoplay mutado. Depois da inicialização deixamos o volume preparado.
 window.setTimeout(prepareMusic, 700);
 window.addEventListener("load", () => window.setTimeout(prepareMusic, 300));
 
@@ -200,7 +206,6 @@ if (musicToggle) {
   });
 }
 
-// Tenta liberar o áudio na primeira interação real do usuário.
 function unlockMusic() {
   if (musicPlaying) return;
   playMusic();
