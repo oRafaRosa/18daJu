@@ -137,22 +137,17 @@ document.querySelectorAll(".red-hood, .basket").forEach((element) => {
   });
 });
 
-/* Player de música via iframe direto do YouTube. */
+/* Player de música via iframe do YouTube. */
 const musicToggle = document.getElementById("musicToggle");
 const youtubeFrame = document.getElementById("youtubeAudioPlayer");
 let musicPlaying = false;
-let frameReady = false;
 
 function sendYouTubeCommand(func, args = []) {
   if (!youtubeFrame?.contentWindow) return;
 
   youtubeFrame.contentWindow.postMessage(
-    JSON.stringify({
-      event: "command",
-      func,
-      args,
-    }),
-    "https://www.youtube.com"
+    JSON.stringify({ event: "command", func, args }),
+    "*"
   );
 }
 
@@ -165,60 +160,34 @@ function updateMusicButton() {
   musicToggle.setAttribute("aria-label", musicPlaying ? "Pausar música" : "Tocar música");
 }
 
-function prepareFrame() {
-  sendYouTubeCommand("addEventListener", ["onStateChange"]);
-  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
-}
-
-function playMusic() {
-  if (!frameReady) return;
-  sendYouTubeCommand("unMute");
+function prepareMusic() {
   sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
   sendYouTubeCommand("playVideo");
 }
 
+function playMusic() {
+  sendYouTubeCommand("unMute");
+  sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
+  sendYouTubeCommand("playVideo");
+
+  // Reenvia pouco depois porque Safari pode ignorar o primeiro comando durante a inicialização.
+  window.setTimeout(() => {
+    sendYouTubeCommand("unMute");
+    sendYouTubeCommand("setVolume", [MUSIC_VOLUME]);
+    sendYouTubeCommand("playVideo");
+  }, 180);
+}
+
 function pauseMusic() {
-  if (!frameReady) return;
   sendYouTubeCommand("pauseVideo");
 }
 
-if (youtubeFrame) {
-  youtubeFrame.addEventListener("load", () => {
-    frameReady = true;
-    prepareFrame();
-
-    // Tenta autoplay. Navegadores podem bloquear até haver interação.
-    window.setTimeout(() => {
-      playMusic();
-    }, 350);
-  });
-}
-
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://www.youtube.com") return;
-
-  let data = event.data;
-  try {
-    if (typeof data === "string") data = JSON.parse(data);
-  } catch {
-    return;
-  }
-
-  if (data?.event === "onStateChange") {
-    // 1 = playing, 2 = paused, 0 = ended
-    musicPlaying = data.info === 1;
-    updateMusicButton();
-  }
-});
+// O iframe já carrega com autoplay mutado. Depois da inicialização deixamos o volume preparado.
+window.setTimeout(prepareMusic, 700);
+window.addEventListener("load", () => window.setTimeout(prepareMusic, 300));
 
 if (musicToggle) {
   musicToggle.addEventListener("click", () => {
-    if (!frameReady) {
-      const label = musicToggle.querySelector(".music-label");
-      if (label) label.textContent = "carregando...";
-      return;
-    }
-
     if (musicPlaying) {
       pauseMusic();
       musicPlaying = false;
@@ -231,14 +200,34 @@ if (musicToggle) {
   });
 }
 
-// Em iOS, a primeira interação do usuário é a melhor chance de liberar áudio.
+// Tenta liberar o áudio na primeira interação real do usuário.
 function unlockMusic() {
-  if (!musicPlaying && frameReady) {
-    playMusic();
-  }
+  if (musicPlaying) return;
+  playMusic();
+  musicPlaying = true;
+  updateMusicButton();
 }
 
-document.addEventListener("pointerdown", unlockMusic, { once: true });
-document.addEventListener("touchstart", unlockMusic, { once: true });
+document.addEventListener("pointerdown", unlockMusic, { once: true, passive: true });
+document.addEventListener("touchstart", unlockMusic, { once: true, passive: true });
 
 updateMusicButton();
+
+/* Bloqueio de zoom no mobile, incluindo gestos específicos do Safari/iOS. */
+document.addEventListener("gesturestart", (event) => event.preventDefault(), { passive: false });
+document.addEventListener("gesturechange", (event) => event.preventDefault(), { passive: false });
+document.addEventListener("gestureend", (event) => event.preventDefault(), { passive: false });
+document.addEventListener("dblclick", (event) => event.preventDefault(), { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener(
+  "touchend",
+  (event) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  },
+  { passive: false }
+);
