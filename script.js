@@ -3,7 +3,7 @@ document.documentElement.classList.add("js");
 const PARTY_DATE = new Date("2026-09-05T14:00:00-03:00");
 const JULIA_WHATSAPP = "5511995817225";
 const WHATSAPP_MESSAGE =
-  "Oi, Júlia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
+  "Oi, Julia! ♡ Confirmo minha presença no seu aniversário de 18 anos no dia 05/09!";
 
 const pad = (value) => String(value).padStart(2, "0");
 
