@@ -1,5 +1,14 @@
 /* Ajustes finais de leitura e composição, com foco no iPhone */
 
+/* Evita que o desenho do J de Julia seja cortado pela caixa tipográfica. */
+.hero h1 {
+  padding: 0.04em 0.14em 0.12em 0.18em;
+  margin-bottom: -0.08em;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  overflow: visible;
+}
+
 .detail-lines {
   margin-top: 9px !important;
 }
@@ -90,6 +99,13 @@
 }
 
 @media (max-width: 700px) {
+  .hero h1 {
+    padding-left: 0.2em;
+    padding-right: 0.14em;
+    line-height: 0.94;
+    letter-spacing: -0.04em;
+  }
+
   .content-section {
     padding-block: 30px;
   }
