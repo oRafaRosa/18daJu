@@ -1,0 +1,223 @@
+/* Ajustes finais de leitura e composição, com foco no iPhone */
+
+.detail-lines {
+  margin-top: 9px !important;
+}
+
+.detail-lines span {
+  display: block;
+}
+
+.detail-lines span + span {
+  margin-top: 2px;
+}
+
+.details-card-shell .details-grid {
+  align-items: stretch;
+}
+
+.details-card-shell .detail-card {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.party-section {
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+
+.party-card {
+  padding: 46px 32px 42px;
+  overflow: hidden;
+}
+
+.party-card::before {
+  width: 150px;
+  height: 150px;
+  left: -95px;
+  bottom: -95px;
+}
+
+.party-card h2 {
+  max-width: 590px;
+  margin: 10px auto 12px;
+  font-size: clamp(2.6rem, 7vw, 3.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.party-copy {
+  max-width: 510px;
+  margin: 0 auto;
+  color: #866672;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.22rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.party-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 24px;
+}
+
+.party-highlights span {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 14px;
+  border: 1px solid rgba(202, 101, 138, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #9e5770;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 7px 18px rgba(139, 72, 98, 0.05);
+}
+
+.party-card .hood-bottom {
+  opacity: 0.45;
+  transform: scale(0.82);
+}
+
+@media (max-width: 700px) {
+  .content-section {
+    padding-block: 30px;
+  }
+
+  .glass-card {
+    padding: 36px 20px;
+    border-radius: 28px;
+  }
+
+  .details-card-shell h2 {
+    margin-bottom: 20px;
+    font-size: clamp(2.55rem, 11vw, 3.35rem);
+  }
+
+  .details-card-shell .details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .details-card-shell .detail-card {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-areas:
+      "icon label"
+      "icon value";
+    column-gap: 13px;
+    row-gap: 2px;
+    align-items: center;
+    justify-items: start;
+    padding: 17px 19px;
+    border-radius: 20px;
+    text-align: left;
+  }
+
+  .details-card-shell .detail-icon {
+    grid-area: icon;
+    width: 44px;
+    min-height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.72);
+    font-size: 1.28rem;
+  }
+
+  .details-card-shell .detail-card small {
+    grid-area: label;
+    margin-top: 0;
+    font-size: 0.64rem;
+  }
+
+  .details-card-shell .detail-card p {
+    grid-area: value;
+    width: 100%;
+    margin: 2px 0 0 !important;
+    font-size: 1.2rem;
+    line-height: 1.22;
+  }
+
+  .detail-lines span + span {
+    margin-top: 1px;
+  }
+
+  .details-card-shell .action-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .details-card-shell .button {
+    min-height: 52px;
+  }
+
+  .party-section {
+    padding-top: 26px;
+    padding-bottom: 26px;
+  }
+
+  .party-card {
+    padding: 38px 22px 34px;
+  }
+
+  .party-card h2 {
+    max-width: 320px;
+    margin-top: 9px;
+    margin-bottom: 12px;
+    font-size: clamp(2.45rem, 12vw, 3.15rem);
+    line-height: 0.98;
+  }
+
+  .party-copy {
+    max-width: 310px;
+    font-size: 1.12rem;
+    line-height: 1.4;
+  }
+
+  .party-highlights {
+    max-width: 310px;
+    margin: 21px auto 0;
+    gap: 8px;
+  }
+
+  .party-highlights span {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .details-card-shell .detail-card {
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 11px;
+    padding-inline: 16px;
+  }
+
+  .details-card-shell .detail-icon {
+    width: 40px;
+    min-height: 40px;
+  }
+
+  .details-card-shell .detail-card p {
+    font-size: 1.12rem;
+  }
+
+  .party-card h2 {
+    font-size: 2.5rem;
+  }
+}
